@@ -61,6 +61,8 @@
 
 unsigned int state = STATE_STOP; // Default value
 DataBuffer heartbeatBuffer(INTERVAL_PING);
+// Message which contain probe value
+MyMessage messageState(CHILD_ID, V_PERCENTAGE);
 
 void before()
 {
@@ -75,7 +77,7 @@ void presentation()
   sendSketchInfo("ControlledRadiator", "1.0.0");
 
   // Register all sensors to gw (they will be created as child devices)
-  present(CHILD_ID, S_DIMMER);
+  present(CHILD_ID, S_DIMMER, "RadiatorState", true);
 }
 
 
@@ -92,6 +94,9 @@ void setup()
   else {
     setState(STATE_STOP);
   }
+
+  // Send initial state to declare device or confirm value
+  send(messageState.set(getState()));  
 }
 
 
@@ -136,6 +141,16 @@ void receive(const MyMessage &message)
 bool isStateValueAllowed(unsigned int s)
 {
   return s == STATE_COMFORT || s == STATE_ECO || s == STATE_FROST_PROTECT || s == STATE_STOP || s == STATE_COMFORT_M1 || s == STATE_COMFORT_M2;
+}
+
+/**
+ * Get state
+ * 
+ * @return unsigned int
+ */
+unsigned int getState()
+{
+  return state;
 }
 
 /**
