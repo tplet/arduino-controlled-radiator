@@ -72,7 +72,7 @@ void before()
 void presentation()  
 { 
   // Send the sketch version information to the gateway
-  sendSketchInfo("RadiatorControl", "1.0");
+  sendSketchInfo("ControlledRadiator", "1.0.0");
 
   // Register all sensors to gw (they will be created as child devices)
   present(CHILD_ID, S_DIMMER);
@@ -87,6 +87,10 @@ void setup()
   // Set relay to last known state (using eeprom storage). If no value stored (=255), ignore restored state
   if (s != 255) {
     setState(s);
+  }
+  // Initial state on first boot
+  else {
+    setState(STATE_STOP);
   }
 }
 
